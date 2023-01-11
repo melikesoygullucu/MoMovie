@@ -2,12 +2,16 @@ import 'dart:async';
 import 'package:firebase_example/Categories/CategoryMainScreen.dart';
 import 'package:firebase_example/MainPage.dart';
 import 'package:firebase_example/NavigationBarPage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import '../notification/service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onBackgroundMessage(FirebaseNotificationService.backgroundMessage);
   await Firebase.initializeApp();
   runApp(const Home());
 }
@@ -30,8 +34,10 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final _service = FirebaseNotificationService();
   @override
   void initState() {
+    _service.connectNotification();
     super.initState();
     Timer(
         Duration(seconds: 8),

@@ -1,5 +1,6 @@
 import 'package:firebase_example/provider/theme_provider.dart';
 import 'package:firebase_example/rating/ratingcontroller.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
@@ -12,6 +13,7 @@ import 'Categories/CategoryMainScreen.dart';
 import 'Home/bloc/theme_bloc/theme_controller.dart';
 import 'Home/bloc/theme_bloc/theme_service.dart';
 import 'NavigationBarPage.dart';
+import 'notification/service.dart';
 
 void main() async {
   await GetStorage.init();
@@ -32,7 +34,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
             create: (context)=>themeProvider(ThemeData())),
-
       ],
       child: ChangeNotifierProvider(
         create: (context) => themeProvider(ThemeData())),
@@ -48,9 +49,7 @@ theme: provider.getTheme(),
           home: SplashScreen(),
         );
       },
-
-
-
     );
   }
 }
+

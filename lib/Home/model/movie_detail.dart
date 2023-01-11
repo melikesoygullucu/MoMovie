@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-
+import 'package:firebase_example/Home/model/movie_detail.dart';
 import 'company.dart';
 import 'genre.dart';
 
