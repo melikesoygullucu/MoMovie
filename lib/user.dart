@@ -1,3 +1,4 @@
 class DataUser {
+  
   var userData;
 }
