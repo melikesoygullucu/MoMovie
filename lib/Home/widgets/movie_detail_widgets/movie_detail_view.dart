@@ -1,16 +1,20 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:transparent_image/transparent_image.dart';
-
+import '../../../rating/ratingcontroller.dart';
 import '../../bloc/movie_detail_bloc/movie_detail_cubit.dart';
 import '../../bloc/theme_bloc/theme_controller.dart';
 import '../../repositories/movie_repository.dart';
 import 'similar_movies_widget.dart';
 
-class MovieDetailView extends StatelessWidget {
+
+class MovieDetailView extends StatefulWidget {
   const MovieDetailView(
       {Key? key,
         required this.movieId,
@@ -22,24 +26,29 @@ class MovieDetailView extends StatelessWidget {
   final int movieId;
 
   @override
+  State<MovieDetailView> createState() => _MovieDetailViewState();
+}
+
+class _MovieDetailViewState extends State<MovieDetailView>{
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
         create: (_) => MovieDetailCubit(
           repository: context.read<MovieRepository>(),
-        )..fetchMovie(movieId),
+        )..fetchMovie(widget.movieId),
         child: DetailView(
-          movieId: movieId,
-          movieRepository: movieRepository,
-          themeController: themeController,
+          movieId: widget.movieId,
+          movieRepository: widget.movieRepository,
+          themeController: widget.themeController,
         ),
       ),
     );
   }
 }
 
-class DetailView extends StatelessWidget {
-  const DetailView(
+class DetailView extends StatefulWidget {
+  DetailView(
       {Key? key,
         required this.movieId,
         required this.themeController,
@@ -50,10 +59,43 @@ class DetailView extends StatelessWidget {
   final int movieId;
 
   @override
+  State<DetailView> createState() => _DetailViewState();
+}
+
+class _DetailViewState extends State<DetailView> {
+  static const id = 'rating_page'; // see GetMaterialApp for this usage
+
+  final controller = Get.find<RatingController>();  // finding the same instance of initialized controller
+
+  Widget _buildBody() {
+    final stars = List<Widget>.generate(5, (index) {
+      return GetBuilder<RatingController>( // rebuilds when update() is called from GetX class
+        builder: (controller) => Expanded(
+          child: GestureDetector(
+            child: controller.buildRatingStar(index),
+            onTap: () {
+              controller.updateAndStoreRating (index + 1); // +1 because index starts at 0 otherwise the star rating is offset by one
+            },
+          ),
+        ),
+      );
+    });
+    return Row(
+      children: [
+        Expanded(
+          child: Row(
+            children: stars,
+          ),
+        ),
+
+      ],
+    );
+  }
+  @override
+  double rating=0;
   Widget build(BuildContext context) {
     final currencyFormatter = NumberFormat();
     final state = context.watch<MovieDetailCubit>().state;
-
     switch (state.status) {
       case ListStatus.failure:
         return const Center(
@@ -261,44 +303,15 @@ class DetailView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 5),
-                        child: IconButton(
-                          onPressed: () {
-                            //provider.toggleFavorite(name!);
-                          },
-                          icon: Icon(
-                            Icons.favorite_border,
-                            size: 18,
-                          ),
-                          //icon: provider.isExist(name!)
-                          // ? const Icon(Icons.favorite_border_outlined)
-                          // : const Icon(Icons.favorite),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 5),
-                        child: IconButton(
-                          onPressed: () {
-                            //provider.toggleFavorite(name!);
-                          },
-                          icon: Icon(Icons.add_circle_outline, size: 18),
-                          //icon: provider.isExist(name!)
-                          // ? const Icon(Icons.add_circle_outline)
-                          // : const Icon(Icons.add_circle),
-                        ),
-                      ),
-                    ],
-                  ),
+
+                  _buildBody(),
                   const SizedBox(
                     height: 20.0,
                   ),
                   Text("OVERVIEW",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           color: Colors.white.withOpacity(0.5))),
                   const SizedBox(
                     height: 10.0,
@@ -306,7 +319,7 @@ class DetailView extends StatelessWidget {
                   Text(state.movie.overview,
                       style: const TextStyle(
                           height: 1.5,
-                          fontSize: 13.0,
+                          fontSize: 12.0,
                           fontWeight: FontWeight.w300)),
                 ],
               ),
@@ -336,14 +349,17 @@ class DetailView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 2.0),
                     child: RepositoryProvider.value(
-                      value: movieRepository,
+                      value: widget.movieRepository,
                       child: SimilarMoviesWidget(
-                        themeController: themeController,
-                        movieRepository: movieRepository,
-                        movieId: movieId,
+                        themeController: widget.themeController,
+                        movieRepository: widget.movieRepository,
+                        movieId: widget.movieId,
                       ),
                     ),
                   )
+
+
+
                 ],
               ),
             ),
