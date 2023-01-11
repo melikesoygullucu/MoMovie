@@ -1,18 +1,21 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_example/MainPage.dart';
-import 'package:firebase_example/Profile/ProfilePage.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../LoginPages/LoginPage.dart';
+import '../provider/theme_provider.dart';
+import 'ProfilePage.dart';
 
 void settingpage() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
+
 
 class irem extends StatefulWidget {
   const irem({Key? key}) : super(key: key);
@@ -22,12 +25,14 @@ class irem extends StatefulWidget {
 }
 
 class _iremState extends State<irem> {
-  final user = FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
     return Scaffold();
   }
 }
+
+
+
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
@@ -37,6 +42,8 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+
+
   final _emailController = TextEditingController();
 
   @override
@@ -119,7 +126,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 }
-
 void main() {
   runApp(const MyApp());
 }
@@ -130,28 +136,31 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
+    return MultiProvider(providers: [
+      ChangeNotifierProvider(
+          create: (context)=>themeProvider(ThemeData.dark())),
+    ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.red,
+        ),
+        home: SettingPageUI(),
       ),
-      home: SettingPageUI(),
     );
   }
 }
-
 class SettingPageUI extends StatefulWidget {
   @override
   _SettingPageUIState createState() => _SettingPageUIState();
 }
-
 class _SettingPageUIState extends State<SettingPageUI> {
+
   void customLaunch(command) async {
-    if (await canLaunch(command)) {
-      await launch(command);
-    } else {
-      print("$command bulunamadı");
-    }
+    if (await canLaunch(command)){
+      await launch(command); }
+    else {
+      print("$command bulunamadı");}
   }
 
   bool valNotify1 = true;
@@ -164,13 +173,12 @@ class _SettingPageUIState extends State<SettingPageUI> {
   IconData _iconDark = Icons.nights_stay;
   ThemeData _lightTheme = ThemeData(
     primarySwatch: Colors.blueGrey,
-    brightness: Brightness.light,
-  );
+    brightness: Brightness.light,);
 
   ThemeData _darkTheme = ThemeData(
     primarySwatch: Colors.red,
-    brightness: Brightness.dark,
-  );
+    brightness: Brightness.dark,);
+
 
   onChangeFunction(bool newValue1) {
     setState(() {
@@ -190,33 +198,25 @@ class _SettingPageUIState extends State<SettingPageUI> {
     });
   }
 
-  FirebaseAuth auth = FirebaseAuth.instance;
-
-  signOut() async {
-    await FirebaseAuth.instance.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final theme =Provider.of<themeProvider>(context);
     return MaterialApp(
-      theme: _iconBool ? _darkTheme : _lightTheme,
+      theme: theme.getTheme(),
       home: Scaffold(
+
         appBar: AppBar(
           backgroundColor: Colors.red,
-          title: Text(" Settings ", style: TextStyle(fontSize: 22)),
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ProfileScreen()));
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
+          title: Text("Settings ", style: TextStyle(fontSize: 22)),
+          leading: IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+
+              builder: (context) {return ProfileScreen();},
             ),
-          ),
-        ),
+            );
+          }, icon: Icon(Icons.arrow_back),
+          ), ),
+
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: 3),
           padding: const EdgeInsets.all(10),
@@ -230,48 +230,41 @@ class _SettingPageUIState extends State<SettingPageUI> {
                     color: Colors.red,
                   ),
                   SizedBox(width: 10),
-                  Text("Profile",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+                  Text("Profile", style: TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold))
                 ],
               ),
               Divider(height: 20, thickness: 1),
               SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return ForgotPasswordPage();
-                      },
-                    ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 8,
-                            blurRadius: 7,
-                            offset: Offset(0, 3))
-                      ]),
-                  child: Text(
-                    " Change Password ",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
+              TextButton(onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ForgotPasswordPage();
+                    },
                   ),
+                );
+              }, child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 8,
+                          blurRadius: 7,
+                          offset: Offset(0, 3)
+                      )
+                    ]
+                ),
+
+                child: Text(" Change Password ",
+                  style: TextStyle(fontSize: 25,fontWeight: FontWeight.w500,color: Colors.black,),
                 ),
               ),
-              SizedBox(
-                height: 15,
               ),
+              SizedBox(height: 15,),
               Row(
                 children: [
                   Icon(
@@ -279,17 +272,14 @@ class _SettingPageUIState extends State<SettingPageUI> {
                     color: Colors.red,
                   ),
                   SizedBox(width: 10),
-                  Text("Suggestions and Opinions",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+                  Text("Suggestions and Opinions", style: TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold))
                 ],
               ),
               Divider(height: 20, thickness: 1),
               SizedBox(height: 25),
-              TextButton(
-                onPressed: () {
-                  customLaunch("mailto:helloworld@gmail.com");
-                },
+              TextButton(onPressed: (){
+                customLaunch("mailto:helloworld@gmail.com"); },
                 child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -299,23 +289,18 @@ class _SettingPageUIState extends State<SettingPageUI> {
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 8,
                             blurRadius: 7,
-                            offset: Offset(0, 3))
-                      ]),
-                  child: Text(
-                    "     E mail     ",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
+                            offset: Offset(0, 3)
+                        )
+                      ]
+                  ),
+                  child: Text("     E mail     ",
+                    style: TextStyle(fontSize: 25,fontWeight: FontWeight.w500,color: Colors.black,),
                   ),
                 ),
               ),
               SizedBox(height: 25),
-              TextButton(
-                onPressed: () {
-                  customLaunch("tel:05071931635");
-                },
+              TextButton(onPressed: (){
+                customLaunch("tel:05071931635"); },
                 child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -325,15 +310,12 @@ class _SettingPageUIState extends State<SettingPageUI> {
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 8,
                             blurRadius: 7,
-                            offset: Offset(0, 3))
-                      ]),
-                  child: Text(
-                    " Telephone  ",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
+                            offset: Offset(0, 3)
+                        )
+                      ]
+                  ),
+                  child: Text(" Telephone  ",
+                    style: TextStyle(fontSize: 25,fontWeight: FontWeight.w500,color: Colors.black,),
                   ),
                 ),
               ),
@@ -342,15 +324,14 @@ class _SettingPageUIState extends State<SettingPageUI> {
                 children: [
                   Icon(Icons.volume_up_outlined, color: Colors.red),
                   SizedBox(width: 10),
-                  Text("Notifications",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+                  Text("Notifications", style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold))
                 ],
               ),
               Divider(height: 20, thickness: 1),
               SizedBox(height: 10),
-              buildNotificationOption(
-                  "NEW PROP", valNotify2, onChangeFunction2),
+              buildNotificationOption( "NEW PROP",  valNotify2, onChangeFunction2),
               SizedBox(height: 40),
               Row(
                 children: [
@@ -363,40 +344,41 @@ class _SettingPageUIState extends State<SettingPageUI> {
                     color: Colors.red,
                   ),
                   SizedBox(width: 10),
-                  Text("Dark Mode",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+                  Text("Dark Mode", style: TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold))
                 ],
               ),
               Divider(height: 20, thickness: 1),
               SizedBox(height: 10),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _iconBool = !_iconBool;
-                  });
-                },
-                icon: Icon(_iconBool ? _iconDark : _iconLight),
+              IconButton(onPressed: ()
+              => theme.setTheme(ThemeData.dark()), icon: Icon(Icons.nights_stay),
+
+                /* setState(() {
+                  _iconBool = !_iconBool;
+                });*/
+                /* icon: Icon(_iconBool ? _iconDark : _iconLight),*/
               ),
-              Divider(height: 20, thickness: 1),
-              SizedBox(height: 30),
+              IconButton(onPressed: ()
+              => theme.setTheme(ThemeData.light()), icon: Icon(Icons.wb_sunny),),
+
+              SizedBox(height: 50),
               Center(
                   child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20))),
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
-                  Navigator.pop(context,
-                      MaterialPageRoute(builder: (context) => MainPage()));
-                },
-                child: Text(
-                  "SIGN OUT",
-                  style: TextStyle(
-                      fontSize: 16, letterSpacing: 2.2, color: Colors.black),
-                ),
-              ))
+                    style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)
+                        )
+                    ),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> LoginPage(showRegisterPage: () {  },)));
+                    },
+                    child: Text("SIGN OUT", style: TextStyle(
+                        fontSize: 16, letterSpacing: 2.2, color: Colors.black
+                    ),
+                    ),
+                  )
+              )
             ],
           ),
         ),
@@ -404,20 +386,18 @@ class _SettingPageUIState extends State<SettingPageUI> {
     );
   }
 
-  Padding buildNotificationOption(
-      String title, bool value, Function onChangeMethod) {
+  Padding buildNotificationOption(String title, bool value, Function onChangeMethod) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title,
-              style: TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600])),
-          Transform.scale(
-            scale: 0.7,
+          Text(title, style: TextStyle(
+              fontSize: 21,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600]
+          )),
+          Transform.scale(scale: 0.7,
             child: CupertinoSwitch(
               activeColor: Colors.red,
               trackColor: Colors.grey,
@@ -425,45 +405,47 @@ class _SettingPageUIState extends State<SettingPageUI> {
               onChanged: (bool newValue) {
                 onChangeMethod(newValue);
               },
-            ),
-          )
+            ),)
         ],
       ),
     );
   }
 
+
   GestureDetector buildAccountOption(BuildContext context, String title) {
     return GestureDetector(
       onTap: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(title),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [Text("Option1"), Text("Option2")],
-                ),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text("Close"))
-                ],
-              );
-            });
+        showDialog(context: context, builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Option1"),
+                Text("Option2")
+              ],
+            ),
+            actions: [
+              TextButton(onPressed: () {
+                Navigator.of(context).pop();
+              },
+                  child: Text(
+                      "Close"
+                  ))
+            ],
+          );
+        });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600])),
+            Text(title, style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600]
+            )),
             Icon(Icons.arrow_forward, color: Colors.grey[600]),
           ],
         ),

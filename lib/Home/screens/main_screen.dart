@@ -25,6 +25,7 @@ class _FirstScreenState extends State<FirstScreen> {
 
   @override
   void initState() {
+    isDarkMode =false;
     super.initState();
   }
 
@@ -36,12 +37,12 @@ class _FirstScreenState extends State<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
-    isDarkMode = widget.themeController.themeMode == ThemeMode.dark;
+    //isDarkMode = widget.themeController.themeMode == ThemeMode.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         // For Android.
         // Use [light] for white status bar and [dark] for black status bar.
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
         // For iOS.
         // Use [dark] for white status bar and [light] for black status bar.
         statusBarBrightness: Brightness.dark,

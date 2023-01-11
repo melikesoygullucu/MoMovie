@@ -23,7 +23,7 @@ class App extends StatelessWidget {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           //restorationScopeId: 'app',
-          theme: CustomTheme.lightTheme,
+          theme: CustomTheme.darkTheme,
           darkTheme: CustomTheme.darkTheme,
 
           home: FirstScreen(
