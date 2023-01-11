@@ -66,6 +66,7 @@ dependencies:
   grock: ^0.0.9+6
   firebase_in_app_messaging: ^0.7.0+10
   firebase_analytics: ^10.1.0
+  firebase_database: ^10.0.9
 
 
   favorite_button: ^0.0.4

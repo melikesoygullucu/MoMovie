@@ -340,20 +340,6 @@ class _SettingPageUIState extends State<SettingPageUI> {
               SizedBox(height: 40),
               Row(
                 children: [
-                  Icon(Icons.volume_up_outlined, color: Colors.red),
-                  SizedBox(width: 10),
-                  Text("Notifications",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
-                ],
-              ),
-              Divider(height: 20, thickness: 1),
-              SizedBox(height: 10),
-              buildNotificationOption(
-                  "NEW PROP", valNotify2, onChangeFunction2),
-              SizedBox(height: 40),
-              Row(
-                children: [
                   Icon(
                     Icons.wb_sunny_outlined,
                     color: Colors.red,
