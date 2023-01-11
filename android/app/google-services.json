@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "904986589541",
+    "project_id": "yeter-e7bf3",
+    "storage_bucket": "yeter-e7bf3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904986589541:android:05accd64bc4357260a098c",
+        "android_client_info": {
+          "package_name": "com.example.firebase_example"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "904986589541-6igf3m7vg9rkf1rqfm3i93fbov5rgsek.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIi4XLJaJY1CnvGFweUb7SyJEnlGnPbLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "904986589541-6igf3m7vg9rkf1rqfm3i93fbov5rgsek.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
