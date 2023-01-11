@@ -58,6 +58,10 @@ dependencies:
   font_awesome_flutter: ^10.3.0
   snapshot: ^0.2.5
   provider: ^6.0.5
+  get: ^4.6.5
+  get_storage: ^2.0.3
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.0.15
 
 
   favorite_button: ^0.0.4
@@ -83,7 +87,7 @@ dependencies:
 
 
   # cloud_firestore: ^4.3.0
-  get: ^4.6.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

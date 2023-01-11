@@ -1,67 +1,108 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
-
 import 'package:shimmer/shimmer.dart';
 import 'package:transparent_image/transparent_image.dart';
-
+import '../../../rating/ratingcontroller.dart';
 import '../../bloc/movie_detail_bloc/movie_detail_cubit.dart';
 import '../../bloc/theme_bloc/theme_controller.dart';
 import '../../repositories/movie_repository.dart';
 import 'similar_movies_widget.dart';
 
-class MovieDetailView extends StatelessWidget {
+
+class MovieDetailView extends StatefulWidget {
   const MovieDetailView(
       {Key? key,
-      required this.movieId,
-      required this.themeController,
-      required this.movieRepository})
+        required this.movieId,
+        required this.themeController,
+        required this.movieRepository})
       : super(key: key);
   final ThemeController themeController;
   final MovieRepository movieRepository;
   final int movieId;
 
+  @override
+  State<MovieDetailView> createState() => _MovieDetailViewState();
+}
+
+class _MovieDetailViewState extends State<MovieDetailView>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
         create: (_) => MovieDetailCubit(
           repository: context.read<MovieRepository>(),
-        )..fetchMovie(movieId),
+        )..fetchMovie(widget.movieId),
         child: DetailView(
-          movieId: movieId,
-          movieRepository: movieRepository,
-          themeController: themeController,
+          movieId: widget.movieId,
+          movieRepository: widget.movieRepository,
+          themeController: widget.themeController,
         ),
       ),
     );
   }
 }
 
-class DetailView extends StatelessWidget {
-  const DetailView(
+class DetailView extends StatefulWidget {
+  DetailView(
       {Key? key,
-      required this.movieId,
-      required this.themeController,
-      required this.movieRepository})
+        required this.movieId,
+        required this.themeController,
+        required this.movieRepository})
       : super(key: key);
   final ThemeController themeController;
   final MovieRepository movieRepository;
   final int movieId;
 
   @override
+  State<DetailView> createState() => _DetailViewState();
+}
+
+class _DetailViewState extends State<DetailView> {
+  static const id = 'rating_page'; // see GetMaterialApp for this usage
+
+  final controller = Get.find<RatingController>();  // finding the same instance of initialized controller
+
+  Widget _buildBody() {
+    final stars = List<Widget>.generate(5, (index) {
+      return GetBuilder<RatingController>( // rebuilds when update() is called from GetX class
+        builder: (controller) => Expanded(
+          child: GestureDetector(
+            child: controller.buildRatingStar(index),
+            onTap: () {
+              controller.updateAndStoreRating (index + 1); // +1 because index starts at 0 otherwise the star rating is offset by one
+            },
+          ),
+        ),
+      );
+    });
+    return Row(
+      children: [
+        Expanded(
+          child: Row(
+            children: stars,
+          ),
+        ),
+
+      ],
+    );
+  }
+  @override
+  double rating=0;
   Widget build(BuildContext context) {
     final currencyFormatter = NumberFormat();
     final state = context.watch<MovieDetailCubit>().state;
-
     switch (state.status) {
       case ListStatus.failure:
         return const Center(
             child: Text(
-          'Oops something went wrong!',
-          style: TextStyle(color: Colors.white),
-        ));
+              'Oops something went wrong!',
+              style: TextStyle(color: Colors.white),
+            ));
       case ListStatus.success:
         return ListView(
           padding: EdgeInsets.zero,
@@ -79,8 +120,8 @@ class DetailView extends StatelessWidget {
                             aspectRatio: 3 / 2,
                             child: Container(
                                 decoration: const BoxDecoration(
-                              color: Colors.black12,
-                            ))),
+                                  color: Colors.black12,
+                                ))),
                       ),
                       AspectRatio(
                           aspectRatio: 3 / 2,
@@ -128,10 +169,10 @@ class DetailView extends StatelessWidget {
                                         aspectRatio: 2 / 3,
                                         child: Container(
                                             decoration: BoxDecoration(
-                                          borderRadius:
+                                              borderRadius:
                                               BorderRadius.circular(5.0),
-                                          color: Colors.black12,
-                                        ))),
+                                              color: Colors.black12,
+                                            ))),
                                   ),
                                 ),
                                 Container(
@@ -142,12 +183,12 @@ class DetailView extends StatelessWidget {
                                       aspectRatio: 2 / 3,
                                       child: ClipRRect(
                                         borderRadius:
-                                            BorderRadius.circular(5.0),
+                                        BorderRadius.circular(5.0),
                                         child: FadeInImage.memoryNetwork(
                                             placeholder: kTransparentImage,
                                             image:
-                                                "https://image.tmdb.org/t/p/w200/" +
-                                                    state.movie.poster),
+                                            "https://image.tmdb.org/t/p/w200/" +
+                                                state.movie.poster),
                                       )),
                                 ),
                               ],
@@ -169,7 +210,7 @@ class DetailView extends StatelessWidget {
                                   ),
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "Release date: " +
@@ -262,6 +303,8 @@ class DetailView extends StatelessWidget {
                       ),
                     ],
                   ),
+
+                  _buildBody(),
                   const SizedBox(
                     height: 20.0,
                   ),
@@ -306,14 +349,17 @@ class DetailView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 2.0),
                     child: RepositoryProvider.value(
-                      value: movieRepository,
+                      value: widget.movieRepository,
                       child: SimilarMoviesWidget(
-                        themeController: themeController,
-                        movieRepository: movieRepository,
-                        movieId: movieId,
+                        themeController: widget.themeController,
+                        movieRepository: widget.movieRepository,
+                        movieId: widget.movieId,
                       ),
                     ),
                   )
+
+
+
                 ],
               ),
             ),

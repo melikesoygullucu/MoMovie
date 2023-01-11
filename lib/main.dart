@@ -1,4 +1,8 @@
 import 'package:firebase_example/provider/theme_provider.dart';
+import 'package:firebase_example/rating/ratingcontroller.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_example/SplashScreen/SplashScreen.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +14,8 @@ import 'Home/bloc/theme_bloc/theme_service.dart';
 import 'NavigationBarPage.dart';
 
 void main() async {
+  await GetStorage.init();
+  Get.put(RatingController());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   final themeController = ThemeController(ThemeService());
