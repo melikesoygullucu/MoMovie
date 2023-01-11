@@ -38,7 +38,7 @@ class _NavBarState extends State<NavBar> {
     return Scaffold(
       body: screens[_currentIndex],
       bottomNavigationBar: BottomNavyBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         //backgroundColor: Colors.blueGrey[900],
         selectedIndex: _currentIndex,
         showElevation: true,
@@ -71,7 +71,7 @@ class _NavBarState extends State<NavBar> {
               title: Text('Profile'),
               activeColor: Colors.blue,
               textAlign: TextAlign.center,
-              inactiveColor: Colors.black),
+              inactiveColor: Colors.blue),
         ],
       ),
     );

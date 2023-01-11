@@ -1,4 +1,5 @@
 import 'package:firebase_example/Home/repositories/movie_repository.dart';
+import 'package:firebase_example/Home/screens/home_screen/first_screen.dart';
 import 'package:firebase_example/Home/style/custom_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,10 +27,7 @@ class App extends StatelessWidget {
           theme: CustomTheme.darkTheme,
           darkTheme: CustomTheme.darkTheme,
 
-          home: FirstScreen(
-            themeController: themeController,
-            movieRepository: movieRepository,
-          ),
+          home: first_screen(),
         );
       },
     );
